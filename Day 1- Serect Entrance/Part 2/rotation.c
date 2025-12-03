@@ -44,6 +44,9 @@ int combination(const char *direction, int *position, int *zero_count)
 
 
 
+    //save position BEFORE updating it
+    int past_position = *position;
+
     //take in direction and number
     if (*direction == 'L')
     {
@@ -51,40 +54,41 @@ int combination(const char *direction, int *position, int *zero_count)
 
         if(*position < 0)
         {
-            *position += DIAL; 
+            *position += DIAL;
         }
-    } 
-    else 
+    }
+    else
     {
         *position = (*position + number_part) %DIAL;
     }
 
     //implement a different zero count for part 2 of the puzzle
-    int past_position = *position;
     *zero_count += number_part / DIAL;
 
     int temp = number_part % DIAL; //keep track of where the position would land
 
-    //count the time the pointer would pass zero
-    if(temp > 0 && past_position != 0) 
+    //count the time the pointer passes through zero DURING rotation (not ending at zero)
+    if(temp > 0 && past_position != 0)
     {
         if (left_or_right == 'R')
         {
+            //going right: if old position + movement goes past 100, we passed through zero
             if (past_position + temp > DIAL)
             {
                 (*zero_count)++;
             }
-            else
+        }
+        else // left_or_right == 'L'
+        {
+            //going left: if old position is less than movement, we passed through zero
+            if (past_position < temp)
             {
-                if (past_position < temp)
-                {
-                    (*zero_count)++;
-                }
+                (*zero_count)++;
             }
         }
     }
     //count the number of time the point at zero
-    if (*position == 0) 
+    if (*position == 0)
     {
         (*zero_count)++;
     }
