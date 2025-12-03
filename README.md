@@ -2,7 +2,7 @@
 
 ## Description:
 * A repository that keep track of my progress as I solve the 2025 advent of code puzzles.
-* The language of choice use to solve most puzzle would be C and C++.
+* The language of choice use to solve most puzzles would be C and C++.
 
 ## Stacks:
 * Coded with VS Code.
