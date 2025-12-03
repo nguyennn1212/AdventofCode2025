@@ -7,7 +7,7 @@
 * The language of choice use to solve most puzzles would be C and C++.
 
 ## Stacks:
-* Coded with VS Code.
+* VS Code IDE.
 * Compiled with [Zig Programing Language](https://ziglang.org/) C and C++ compiler.
 * Git and Github for version control.
 
