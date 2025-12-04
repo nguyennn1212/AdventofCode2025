@@ -102,7 +102,7 @@ int main()
     const char *filename = "input.txt";
 
     file = fopen(filename, "r");
-    if(file == NULL)
+    if(file == NULL) 
     {
         perror("Error opening file");
         return 1;
@@ -129,15 +129,14 @@ int main()
     //iterate through each number
     printf("starting range iteration\n");
 
-    long long sum_of_invalid = 0;
-
     //loop through reach Range structure
     for (int i = 0; i < num_ranges; i++)
     {
         long long start = parsed_ranges[i].start;
         long long end = parsed_ranges[i].end;
+        long long sum_of_invalid = 0;
         printf("\nProcessing Range %d: %lld to %lld\n", i + 1, start, end);
-
+        
         //loop through every number from start range to end range
         for(long long j = start; j <= end; j++)
         {
@@ -147,11 +146,10 @@ int main()
                 sum_of_invalid = sum_of_invalid + j;
             }
         }
+        printf("The sum of invalid ID is: %lld\n", sum_of_invalid);
     }
-
-    printf("\nThe total sum of all invalid IDs is: %lld\n", sum_of_invalid);
 
     free(parsed_ranges);
     printf("\nProgram end.\n");
-    return 0;
+    return 0; 
 }
