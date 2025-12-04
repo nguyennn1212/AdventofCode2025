@@ -50,6 +50,49 @@ void parse_ranges(const char *input_string, Range **ranges, int *count)
     free(input_copy);
 }
 
+long long invalid_id(long long number)
+{
+    char num_str[22];
+    sprintf(num_str, "%lld", number);
+    int len = strlen(num_str);
+
+    if (len <= 1)
+    {
+        return 0;
+    }
+
+    for (int invalid_pattern_len = 1; invalid_pattern_len <= len / 2; invalid_pattern_len++)
+    {
+        if (len % invalid_pattern_len == 0)
+        {
+            char pattern[invalid_pattern_len + 1];
+            strncpy(pattern, num_str, invalid_pattern_len);
+            pattern[invalid_pattern_len] = '\0';
+
+            int is_repeat = 1;
+
+            for (int i = invalid_pattern_len; i < len; i += invalid_pattern_len)
+            {
+                char curr[invalid_pattern_len + 1];
+                strncpy(curr, num_str + i, invalid_pattern_len);
+                curr[invalid_pattern_len] = '\0';
+
+                if (strcmp(pattern, curr) != 0)
+                {
+                    is_repeat = 0;
+                    break;
+                }
+            }
+
+            if (is_repeat)
+            {
+                return number;
+            }
+        }
+    }
+    return 0;
+}
+
 int main()
 {
     FILE *file;
@@ -59,7 +102,7 @@ int main()
     const char *filename = "input.txt";
 
     file = fopen(filename, "r");
-    if(file == NULL) 
+    if(file == NULL)
     {
         perror("Error opening file");
         return 1;
@@ -86,22 +129,29 @@ int main()
     //iterate through each number
     printf("starting range iteration\n");
 
+    long long sum_of_invalid = 0;
+
     //loop through reach Range structure
     for (int i = 0; i < num_ranges; i++)
     {
-        int start = parsed_ranges[i].start;
-        int end = parsed_ranges[i].end;
-        
-        printf("\nProcessing Range %d: %d to %d\n", i + 1, start, end);
-        
+        long long start = parsed_ranges[i].start;
+        long long end = parsed_ranges[i].end;
+        printf("\nProcessing Range %d: %lld to %lld\n", i + 1, start, end);
+
         //loop through every number from start range to end range
-        for(int j = start; j <= end; j++)
+        for(long long j = start; j <= end; j++)
         {
-            printf("%d\n",j);
+            if(invalid_id(j))
+            {
+                printf("Invalid ID is: %lld\n", j);
+                sum_of_invalid = sum_of_invalid + j;
+            }
         }
     }
-    
-    free(parse_ranges);
+
+    printf("\nThe total sum of all invalid IDs is: %lld\n", sum_of_invalid);
+
+    free(parsed_ranges);
     printf("\nProgram end.\n");
-    return 0; 
+    return 0;
 }

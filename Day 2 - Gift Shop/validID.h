@@ -4,8 +4,9 @@
 #include <ctype.h>
 
 typedef struct {
-    int start;
-    int end;
+    long long start;
+    long long end;
 } Range; 
 
+long long invalid_id(long long number);
 void parse_ranges(const char *input_string, Range **ranges, int *count);
