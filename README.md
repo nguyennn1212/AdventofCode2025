@@ -15,4 +15,6 @@
 [Day 1 - Serect Entrance](https://github.com/nguyennn1212/AdventofCode2025/tree/main/Day%201-%20Serect%20Entrance)
 
 [Day 2 - Gift Shop](https://github.com/nguyennn1212/AdventofCode2025/tree/main/Day%202%20-%20Gift%20Shop)
+
+[Day 3 - Lobby](https://github.com/nguyennn1212/AdventofCode2025/tree/main/Day%203-%20Lobby)
   
