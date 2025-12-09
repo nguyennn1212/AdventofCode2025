@@ -35,12 +35,12 @@ void parse_ranges(const char *input_string, Range **ranges, int *count)
         if (dash_ptr != NULL)
         {
             *dash_ptr = '\0';
-            (*ranges)[*count - 1].start = atoi(range_token);
-            (*ranges)[*count - 1].end = atoi(dash_ptr + 1);
+            (*ranges)[*count - 1].start = atoll(range_token);
+            (*ranges)[*count - 1].end = atoll(dash_ptr + 1);
         }
-        else 
+        else
         {
-            (*ranges)[*count - 1].start = atoi(range_token);
+            (*ranges)[*count - 1].start = atoll(range_token);
             (*ranges)[*count - 1].end = (*ranges)[*count - 1].start;
         }
 
@@ -50,7 +50,7 @@ void parse_ranges(const char *input_string, Range **ranges, int *count)
     free(input_copy);
 }
 
-long long invalid_id(long long number)
+int is_invalid_id(long long number)
 {
     char num_str[22];
     sprintf(num_str, "%lld", number);
@@ -61,36 +61,36 @@ long long invalid_id(long long number)
         return 0;
     }
 
-    for (int invalid_pattern_len = 1; invalid_pattern_len <= len / 2; invalid_pattern_len++)
+    int n = len / 2;  
+
+    //extract first half
+    char part_a[n + 1];
+    strncpy(part_a, num_str, n);
+    part_a[n] = '\0';
+
+    //extract second half
+    int part_b_len = len - n;
+    char part_b[part_b_len + 1];
+    strncpy(part_b, num_str + n, part_b_len);
+    part_b[part_b_len] = '\0';
+
+    //if both part are equal it's invalid
+    if (strcmp(part_a, part_b) == 0)
     {
-        if (len % invalid_pattern_len == 0)
-        {
-            char pattern[invalid_pattern_len + 1];
-            strncpy(pattern, num_str, invalid_pattern_len);
-            pattern[invalid_pattern_len] = '\0';
-
-            int is_repeat = 1;
-
-            for (int i = invalid_pattern_len; i < len; i += invalid_pattern_len)
-            {
-                char curr[invalid_pattern_len + 1];
-                strncpy(curr, num_str + i, invalid_pattern_len);
-                curr[invalid_pattern_len] = '\0';
-
-                if (strcmp(pattern, curr) != 0)
-                {
-                    is_repeat = 0;
-                    break;
-                }
-            }
-
-            if (is_repeat)
-            {
-                return number;
-            }
-        }
+        return 1;
     }
+
     return 0;
+}
+
+long long add_ids(long long *invalid_ids, int count)
+{
+    long long sum = 0;
+    for (int i = 0; i < count; i++)
+    {
+        sum += invalid_ids[i];
+    }
+    return sum;
 }
 
 int main()
@@ -126,29 +126,45 @@ int main()
 
     printf("Input \"%s\" parsed into %d ranges .\n", buffer, num_ranges);
 
-    //iterate through each number
+    //store all invalid IDs
+    long long *invalid_ids = NULL;
+    int invalid_count = 0;
+
     printf("starting range iteration\n");
 
-    //loop through reach Range structure
+    //loop through each Range structure
     for (int i = 0; i < num_ranges; i++)
     {
         long long start = parsed_ranges[i].start;
         long long end = parsed_ranges[i].end;
-        long long sum_of_invalid = 0;
         printf("\nProcessing Range %d: %lld to %lld\n", i + 1, start, end);
-        
+
         //loop through every number from start range to end range
         for(long long j = start; j <= end; j++)
         {
-            if(invalid_id(j))
+            if(is_invalid_id(j))
             {
-                printf("Invalid ID is: %lld\n", j);
-                sum_of_invalid = sum_of_invalid + j;
+                //add to invalid_ids array
+                invalid_count++;
+                invalid_ids = (long long *)realloc(invalid_ids, invalid_count * sizeof(long long));
+                if(invalid_ids == NULL)
+                {
+                    perror("Memory reallocation failed");
+                    free(parsed_ranges);
+                    return 1;
+                }
+                invalid_ids[invalid_count - 1] = j;
+                printf("Invalid ID found: %lld\n", j);
             }
         }
-        printf("The sum of invalid ID is: %lld\n", sum_of_invalid);
     }
 
+    //sum of all invalid IDs
+    long long sum_of_invalid = add_ids(invalid_ids, invalid_count);
+    printf("\nTotal invalid IDs found: %d\n", invalid_count);
+    printf("The sum of all invalid IDs is: %lld\n", sum_of_invalid);
+
+    free(invalid_ids);
     free(parsed_ranges);
     printf("\nProgram end.\n");
     return 0; 
